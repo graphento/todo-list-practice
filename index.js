@@ -1,4 +1,4 @@
-﻿function createElement(tag, attributes, children) {
+﻿function createElement(tag, attributes, children, callbacks) {
   const element = document.createElement(tag);
 
   if (attributes) {
@@ -21,6 +21,12 @@
     element.appendChild(children);
   }
 
+  if (callbacks) {
+    for (const [event, callback] of Object.entries(callbacks)) {
+      element.addEventListener(event, callback);
+    }
+  }
+
   return element;
 }
 
@@ -39,21 +45,37 @@ class TodoList extends Component {
     this.state = state;
   }
 
+  onAddTask() {
+    this.state.tasks.push(this.state.addInput);
+    this.state.addInput = "";
+  }
+
+  onAddInputChange(value) {
+    this.state.addInput = value;
+  }
+
   render() {
     return createElement("div", { class: "todo-list" }, [
       createElement("h1", {}, "TODO List"),
       createElement("div", { class: "add-todo" }, [
-        createElement("input", {
-          id: "new-todo",
-          type: "text",
-          placeholder: "Задание",
+        createElement(
+          "input",
+          {
+            id: "new-todo",
+            type: "text",
+            placeholder: "Задание",
+          },
+          null,
+          { input: (event) => this.onAddInputChange(event.target.value) },
+        ),
+        createElement("button", { id: "add-btn" }, "+", {
+          click: () => this.onAddTask(),
         }),
-        createElement("button", { id: "add-btn" }, "+"),
       ]),
       createElement(
         "ul",
         { id: "todos" },
-        this.state.map((task) =>
+        this.state.tasks.map((task) =>
           createElement("li", {}, [
             createElement("input", { type: "checkbox" }),
             createElement("label", {}, task),
@@ -67,10 +89,9 @@ class TodoList extends Component {
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.appendChild(
-    new TodoList([
-      "Сделать домашку",
-      "Сделать практику",
-      "Пойти домой",
-    ]).getDomNode(),
+    new TodoList({
+      addInput: "",
+      tasks: ["Сделать домашку", "Сделать практику", "Пойти домой"],
+    }).getDomNode(),
   );
 });
