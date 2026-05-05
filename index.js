@@ -129,7 +129,10 @@ class TodoList extends Component {
   }
 
   onAddTask() {
-    this.state.tasks.push(this.state.addInput);
+    this.state.tasks.push({
+      label: this.state.addInput,
+      checked: false,
+    });
     this.state.addInput = "";
     this.update();
   }
@@ -174,23 +177,13 @@ class TodoList extends Component {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.body.appendChild(
-    new TodoList({
-      addInput: "",
-      tasks: [
-        {
-          label: "Сделать домашку",
-          checked: true,
-        },
-        {
-          label: "Сделать практику",
-          checked: false,
-        },
-        {
-          label: "Пойти домой",
-          checked: false,
-        },
-      ],
-    }).getDomNode(),
-  );
+  const listState = JSON.parse(localStorage.getItem("todoListState")) || {
+    tasks: [],
+    addInput: "",
+  };
+  const list = new TodoList(listState).getDomNode();
+  window.addEventListener("beforeunload", () => {
+    localStorage.setItem("todoListState", JSON.stringify(listState));
+  });
+  document.body.appendChild(list);
 });
