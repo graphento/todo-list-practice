@@ -37,6 +37,12 @@ class Component {
     this._domNode = this.render();
     return this._domNode;
   }
+
+  update() {
+    const node = this.render();
+    this._domNode.replaceWith(node);
+    this._domNode = node;
+  }
 }
 
 class TodoList extends Component {
@@ -48,6 +54,7 @@ class TodoList extends Component {
   onAddTask() {
     this.state.tasks.push(this.state.addInput);
     this.state.addInput = "";
+    this.update();
   }
 
   onAddInputChange(value) {
