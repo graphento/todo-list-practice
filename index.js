@@ -177,13 +177,17 @@ class TodoList extends Component {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const listState = JSON.parse(localStorage.getItem("todoListState")) || {
+  const localStorageKey = "todoListState";
+  const listState = JSON.parse(localStorage.getItem(localStorageKey)) || {
     tasks: [],
     addInput: "",
   };
-  const list = new TodoList(listState).getDomNode();
+
+  const list = new TodoList(listState);
+
   window.addEventListener("beforeunload", () => {
-    localStorage.setItem("todoListState", JSON.stringify(listState));
+    localStorage.setItem(localStorageKey, JSON.stringify(list.state));
   });
-  document.body.appendChild(list);
+
+  document.body.appendChild(list.getDomNode());
 });
