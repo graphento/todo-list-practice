@@ -81,6 +81,22 @@ class Task extends Component {
     this._onDeleteTask = onDeleteTask;
   }
 
+  onDeleteTask() {
+    if (this.state.wannaDelete) {
+      this.state.wannaDelete = false;
+      this._onDeleteTask();
+    } else {
+      this.state.wannaDelete = true;
+      setTimeout(() => {
+        if (this.state.wannaDelete) {
+          this.state.wannaDelete = false;
+          this.update();
+        }
+      }, 1000);
+      this.update();
+    }
+  }
+
   render() {
     return createElement("li", {}, [
       createElement(
@@ -92,9 +108,16 @@ class Task extends Component {
         },
       ),
       createElement("label", {}, this.state.label),
-      createElement("button", {}, "🗑️", {
-        click: () => this._onDeleteTask(),
-      }),
+      createElement(
+        "button",
+        {
+          class: this.state.wannaDelete ? "wanna-delete" : "",
+        },
+        "🗑️",
+        {
+          click: () => this.onDeleteTask(),
+        },
+      ),
     ]);
   }
 }
@@ -134,7 +157,7 @@ class TodoList extends Component {
         },
         () => this.onAddTask(),
         (value) => this.onAddInputChange(value),
-      ).render(),
+      ).getDomNode(),
       createElement(
         "ul",
         { id: "todos" },
@@ -143,7 +166,7 @@ class TodoList extends Component {
             { label: task.label, checked: task.checked },
             (checked) => this.onToggleTask(index, checked),
             () => this.onDeleteTask(index),
-          ).render(),
+          ).getDomNode(),
         ),
       ),
     ]);

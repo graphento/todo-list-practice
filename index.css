@@ -63,3 +63,7 @@ button {
 .todo-list li input[type="checkbox"]:checked + label {
     color: rgb(188, 188, 188);
 }
+
+.todo-list li button.wanna-delete {
+    background-color: red;
+}
